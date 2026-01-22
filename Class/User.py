@@ -38,35 +38,35 @@ class User:
         self.__role = role
     
     # hàm phương thức
-def login(self, username, password):
-    query = """
+    def login(self, username, password):
+        query = """
         SELECT userId, userName, password, role
         FROM User
         WHERE userName = %s AND password = %s
     """
-    rows = main.execute_query(conn, query, (username, password))
-    if not rows:
-        return False
-    row = rows[0]  # row là dict
-    self.setUserId(row["userId"])
-    self.setUsername(row["userName"])
-    self.setPassword(row["password"])
-    self.setRole(row["role"])
-    return True
-
-
-
-def logout(self):
-    self.setUserId(None)
-    self.setUsername(None)
-    self.setPassword(None)
-    self.setRole(None)
-    return True
-
-
-
-def change_passWord(self, username, password,Newpassword):
-    if login(self, username, password):
-        self.setPassword(Newpassword)
+        rows = main.execute_query(conn, query, (username, password))
+        if not rows:
+            return False
+        row = rows[0]  # row là dict
+        self.setUserId(row["userId"])
+        self.setUsername(row["userName"])
+        self.setPassword(row["password"])
+        self.setRole(row["role"])
         return True
-    return False
+
+
+
+    def logout(self):
+        self.setUserId(None)
+        self.setUsername(None)
+        self.setPassword(None)
+        self.setRole(None)
+        return True
+
+
+
+    def change_passWord(self, username, password,Newpassword):
+        if self.login(username, password):
+            self.setPassword(Newpassword)
+            return True
+        return False
