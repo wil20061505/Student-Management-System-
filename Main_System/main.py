@@ -53,6 +53,28 @@ def close_connection(conn):
         print("Đã đóng kết nối MySQL")
 
 
+def execute_update(
+    conn,
+    query: str,
+    params: tuple | None = None
+) -> bool:
+
+    if conn is None or not conn.is_connected():
+        return False
+
+    cur = conn.cursor()
+    try:
+        cur.execute(query, params)
+        conn.commit()
+        return True
+    except mysql.connector.Error as err:
+        conn.rollback()
+        print(f"Lỗi SQL: {err}")
+        return False
+    finally:
+        cur.close()
+
+
 conn = connect_db()
 
 
