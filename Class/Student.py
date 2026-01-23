@@ -13,27 +13,24 @@ class Student(User):
 
         query = """
             SELECT
-                studentID,
-                fullName,
-                email,
-                phone,
-                address,
-                idNumber,
-                status
-            FROM Student
-            WHERE userName = %s AND password = %s
+        teacherID,
+        fullName,
+        email,
+        userID
+            FROM Teacher
+            WHERE userID = %s
         """
 
         rows = main.execute_query(
             conn,
             query,
-            (user.getUsername(), user.getPassword())
+            (user.getUserId(),)
         )
 
         if not rows:
             raise ValueError("Không tìm thấy sinh viên")
 
-        row = rows[0]  # row là dict
+        row = rows[0]  # dict
 
         self.__StudentID = row["studentID"]
         self.__Fullname = row["fullName"]
@@ -42,6 +39,7 @@ class Student(User):
         self.__address = row["address"]
         self.__Idnumber = row["idNumber"]
         self.__status = row["status"]
+
     # Getter và Setter cho StudentID
     def getStudentID(self):
         return self.__StudentID

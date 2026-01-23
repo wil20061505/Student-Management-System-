@@ -94,3 +94,7 @@ CREATE TABLE AcademicResult (
     CONSTRAINT fk_result_class FOREIGN KEY (classID) REFERENCES Class (classID),
     CONSTRAINT fk_result_student FOREIGN KEY (studentID) REFERENCES Student (studentID)
 ) ENGINE = InnoDB;
+
+ALTER TABLE Teacher
+ADD instructorID CHAR(10),
+ADD CONSTRAINT fk_teacher_instructor FOREIGN KEY (instructorID) REFERENCES Instructor (instructorID);
