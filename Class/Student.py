@@ -95,7 +95,7 @@ class Student(User):
             SET studentID = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_student_id, self.getStudentID())
@@ -107,7 +107,7 @@ class Student(User):
             SET fullName = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_fullname, self.getStudentID())
@@ -119,7 +119,7 @@ class Student(User):
             SET email = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_Email, self.getStudentID())
@@ -131,7 +131,7 @@ class Student(User):
             SET phone = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_phone, self.getStudentID())
@@ -143,7 +143,7 @@ class Student(User):
             SET address = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_address, self.getStudentID())
@@ -155,7 +155,7 @@ class Student(User):
             SET idNumber = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_idnumber, self.getStudentID())
@@ -167,7 +167,7 @@ class Student(User):
             SET status = %s
             WHERE studentID = %s
         """
-        main.execute_query(
+        main.execute_update(
             conn,
             query,
             (new_status, self.getStudentID())

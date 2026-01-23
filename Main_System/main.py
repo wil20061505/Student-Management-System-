@@ -19,13 +19,15 @@ def connect_db():
         return None
 
 
-def cursor(conn):
+def get_cursor(conn, dictionary: bool = False):
+    """
+    Trả về cursor từ connection hiện tại
+    dictionary=True  -> dùng cho SELECT
+    dictionary=False -> dùng cho INSERT/UPDATE/DELETE
+    """
     if conn is not None and conn.is_connected():
-        return conn.cursor()
+        return conn.cursor(dictionary=dictionary)
     return None
-
-
-
 
 def execute_query(
     conn,
@@ -74,6 +76,18 @@ def execute_update(
     finally:
         cur.close()
 
+def commit_transaction(conn, success: bool):
+    """
+    success=True  -> commit
+    success=False -> rollback
+    """
+    if conn is None or not conn.is_connected():
+        return
+
+    if success:
+        conn.commit()
+    else:
+        conn.rollback()
 
 conn = connect_db()
 
