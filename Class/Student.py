@@ -1,4 +1,5 @@
 from User import User
+from Course import Course
 from Main_System import main
 conn = main.connect_db()
 class Student(User):
@@ -274,4 +275,127 @@ class Student(User):
         print(f"GPA (4.0)  : {gpa['GPA_4']}")
 
     # hàm join course
-    
+    from datetime import date
+
+    def joinCourse(self, course: Course):
+        """
+        Sinh viên đăng ký học 1 course (tự động chọn class đang mở)
+        """
+
+        # 1. Tìm class của course đang mở enrollment
+        query_find_class = """
+            SELECT
+                c.classID,
+                c.maxStudent,
+                e.registeredCount,
+                e.enrollmentID,
+                e.openDate,
+                e.endDate
+            FROM Class c
+            JOIN Enrollment e ON c.classID = e.classID
+            WHERE c.courseID = %s
+            AND e.openDate <= CURDATE()
+            AND e.endDate >= CURDATE()
+            LIMIT 1
+        """
+
+        rows = main.execute_query(
+            conn,
+            query_find_class,
+            (course.get_courseID(),)
+        )
+
+        if not rows:
+            print("Không có lớp nào đang mở để đăng ký")
+            return
+
+        row = rows[0]
+
+        # 2. Kiểm tra sĩ số
+        if row["registeredCount"] >= row["maxStudent"]:
+            print("Lớp đã đủ sĩ số")
+            return
+
+        classID = row["classID"]
+
+        # 3. Kiểm tra sinh viên đã đăng ký chưa
+        query_check = """
+            SELECT 1
+            FROM Enrollment
+            WHERE studentID = %s AND classID = %s
+        """
+
+        exists = main.execute_query(
+            conn,
+            query_check,
+            (self.getStudentID(), classID)
+        )
+
+        if exists:
+            print("Sinh viên đã đăng ký lớp này")
+            return
+
+        # 4. Tạo Enrollment mới
+        new_enrollment_id = f"ENR{self.getStudentID()[-3:]}{classID[-3:]}"
+
+        query_insert_enrollment = """
+            INSERT INTO Enrollment (
+                enrollmentID,
+                status,
+                openDate,
+                endDate,
+                registeredCount,
+                studentID,
+                classID
+            )
+            VALUES (%s, 'ACTIVE', CURDATE(), CURDATE(), 1, %s, %s)
+        """
+
+        success = main.execute_update(
+            conn,
+            query_insert_enrollment,
+            (
+                new_enrollment_id,
+                self.getStudentID(),
+                classID
+            )
+        )
+
+        if not success:
+            print("Đăng ký lớp thất bại")
+            return
+
+        # 5. Cập nhật sĩ số
+        query_update_count = """
+            UPDATE Enrollment
+            SET registeredCount = registeredCount + 1
+            WHERE classID = %s
+        """
+
+        main.execute_update(conn, query_update_count, (classID,))
+
+        # 6. Tạo AcademicResult rỗng
+        query_insert_result = """
+            INSERT INTO AcademicResult (
+                resultID,
+                score,
+                grade,
+                classID,
+                studentID
+            )
+            VALUES (%s, NULL, NULL, %s, %s)
+        """
+
+        result_id = f"RES{self.getStudentID()[-3:]}{classID[-3:]}"
+
+        main.execute_update(
+            conn,
+            query_insert_result,
+            (
+                result_id,
+                classID,
+                self.getStudentID()
+            )
+        )
+
+        print("Đăng ký học phần thành công")

@@ -66,7 +66,7 @@ class teacher(User):
     
     def set_instructorID(self, instructorID):
         self.__instructorID = instructorID
-
+# nhập điểm 
     def enterScore(self, student : Student , course : Course, score):
         query = """
     INSERT INTO AcademicResult (studentID, courseID, score, grade)
