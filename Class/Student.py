@@ -1,7 +1,8 @@
-from User import User
-from Course import Course
-from Main_System import main
-conn = main.connect_db()
+from Class.User import User
+from Class.Course import Course
+from Main_System import main_system
+from datetime import date
+conn = main_system.connect_db()
 class Student(User):
     def __init__(self, user: User):
         # gọi constructor cha
@@ -14,15 +15,18 @@ class Student(User):
 
         query = """
             SELECT
-        teacherID,
-        fullName,
-        email,
-        userID
+                studentID,
+                fullName,
+                email,
+                phone,
+                address,
+                idNumber,
+                status
             FROM Student
             WHERE userID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (user.getUserId(),)
@@ -51,11 +55,11 @@ class Student(User):
         return self.__Fullname
     def setFullname(self, Fullname):
         self.__Fullname = Fullname
-    # Getter và Geter cho Email
+    # Getter và Setter cho Email
     def getEmail(self):
         return self.__Email
     def setEmail(self, Email):
-        self.__phone = Email
+        self.__Email = Email
     # Getter và Setter cho phone
     def getPhone(self):
         return self.__phone 
@@ -94,7 +98,7 @@ class Student(User):
             SET studentID = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_student_id, self.getStudentID())
@@ -106,7 +110,7 @@ class Student(User):
             SET fullName = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_fullname, self.getStudentID())
@@ -118,7 +122,7 @@ class Student(User):
             SET email = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_Email, self.getStudentID())
@@ -130,7 +134,7 @@ class Student(User):
             SET phone = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_phone, self.getStudentID())
@@ -142,7 +146,7 @@ class Student(User):
             SET address = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_address, self.getStudentID())
@@ -154,7 +158,7 @@ class Student(User):
             SET idNumber = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_idnumber, self.getStudentID())
@@ -166,7 +170,7 @@ class Student(User):
             SET status = %s
             WHERE studentID = %s
         """
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query,
             (new_status, self.getStudentID())
@@ -227,7 +231,7 @@ class Student(User):
             FROM AcademicResult
             WHERE studentID = %s
         """
-        grades = main.execute_query(conn, query, (self.getStudentID(),))
+        grades = main_system.execute_query(conn, query, (self.getStudentID(),))
 
         if not grades:
             print("Không có dữ liệu điểm")
@@ -263,7 +267,7 @@ class Student(User):
             GROUP BY s.studentID, s.fullName
         """
 
-        gpas = main.execute_query(conn, query, (self.getStudentID(),))
+        gpas = main_system.execute_query(conn, query, (self.getStudentID(),))
 
         if not gpas:
             print("Không có dữ liệu GPA")
@@ -275,7 +279,6 @@ class Student(User):
         print(f"GPA (4.0)  : {gpa['GPA_4']}")
 
     # hàm join course
-    from datetime import date
 
     def joinCourse(self, course: Course):
         """
@@ -299,7 +302,7 @@ class Student(User):
             LIMIT 1
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query_find_class,
             (course.get_courseID(),)
@@ -325,7 +328,7 @@ class Student(User):
             WHERE studentID = %s AND classID = %s
         """
 
-        exists = main.execute_query(
+        exists = main_system.execute_query(
             conn,
             query_check,
             (self.getStudentID(), classID)
@@ -351,7 +354,7 @@ class Student(User):
             VALUES (%s, 'ACTIVE', CURDATE(), CURDATE(), 1, %s, %s)
         """
 
-        success = main.execute_update(
+        success = main_system.execute_update(
             conn,
             query_insert_enrollment,
             (
@@ -372,7 +375,7 @@ class Student(User):
             WHERE classID = %s
         """
 
-        main.execute_update(conn, query_update_count, (classID,))
+        main_system.execute_update(conn, query_update_count, (classID,))
 
         # 6. Tạo AcademicResult rỗng
         query_insert_result = """
@@ -388,7 +391,7 @@ class Student(User):
 
         result_id = f"RES{self.getStudentID()[-3:]}{classID[-3:]}"
 
-        main.execute_update(
+        main_system.execute_update(
             conn,
             query_insert_result,
             (

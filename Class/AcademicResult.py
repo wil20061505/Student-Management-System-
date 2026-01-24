@@ -1,5 +1,5 @@
-from Main_System import main
-conn = main.connect_db()
+from Main_System import main_system
+conn = main_system.connect_db()
 class AcademicResult:
     def __init__(self, resultID):
         query = """
@@ -13,7 +13,7 @@ class AcademicResult:
             WHERE resultID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (resultID,)
@@ -31,32 +31,43 @@ class AcademicResult:
         self.__studentID = row["studentID"]
 
     # getter
-        def getResultID(self):
-            return self.__resultID
+    def getResultID(self):
+        return self.__resultID
 
-        def getScore(self):
-            return self.__score
+    def getScore(self):
+        return self.__score
 
-        def getGrade(self):
-            return self.__grade
+    def getGrade(self):
+        return self.__grade
 
-        def getClassID(self):
-            return self.__classID
+    def getClassID(self):
+        return self.__classID
 
-        def getStudentID(self):
-            return self.__studentID
+    def getStudentID(self):
+        return self.__studentID
+    
     # setter
-        def setScore(self, score):
-            if score < 0 or score > 10:
-                raise ValueError("Điểm phải nằm trong khoảng 0–10")
-            self.__score = score
-            self.__grade = self.__calculateGrade(score)
+    def setScore(self, score):
+        if score < 0 or score > 10:
+            raise ValueError("Điểm phải nằm trong khoảng 0–10")
+        self.__score = score
+        self.__grade = self.__calculateGrade(score)
 
-        def setGrade(self, grade):
-            self.__grade = grade
+    def setGrade(self, grade):
+        self.__grade = grade
 
-        def setClassID(self, classID):
-            self.__classID = classID
+    def setClassID(self, classID):
+        self.__classID = classID
 
-        def setStudentID(self, studentID):
-            self.__studentID = studentID
+    def setStudentID(self, studentID):
+        self.__studentID = studentID
+
+    def __calculateGrade(self, score):
+        if score >= 8.5:
+            return 'A'
+        elif score >= 7.0:
+            return 'B'
+        elif score >= 5.5:
+            return 'C'
+        else:
+            return 'D'

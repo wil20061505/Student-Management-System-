@@ -1,5 +1,5 @@
-from Main_System import main
-conn = main.connect_db()
+from Main_System import main_system
+conn = main_system.connect_db()
 from datetime import date
 
 class Enrollment:
@@ -18,7 +18,7 @@ class Enrollment:
               AND studentID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (classID, studentID)

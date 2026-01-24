@@ -1,5 +1,5 @@
-from Main_System import main
-conn = main.connect_db()
+from Main_System import main_system
+conn = main_system.connect_db()
 class User:
     #hàm tạo 
     def __init__(self,userId,username,password,role):
@@ -44,7 +44,7 @@ class User:
         FROM User
         WHERE userName = %s AND password = %s
     """
-        rows = main.execute_query(conn, query, (username, password))
+        rows = main_system.execute_query(conn, query, (username, password))
         if not rows:
             return False
         row = rows[0]  # row là dict

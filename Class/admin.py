@@ -1,11 +1,11 @@
-from User import User
-from Student import Student
-from Department import Department
-from Class_ import Class
-from Course import Course
+from Class.User import User
+from Class.Student import Student
+from Class.Department import Department
+from Class.Class_ import Class
+from Class.Course import Course
 
-from Main_System import main
-conn = main.connect_db()
+from Main_System import main_system
+conn = main_system.connect_db()
 class Admin(User):
     def __init__(self,user : User):
         super().__init__(
@@ -22,7 +22,7 @@ class Admin(User):
             WHERE userID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (user.getUserId(),)
@@ -62,7 +62,7 @@ class Admin(User):
         )
 
         try:
-            main.execute_update(conn,query, params)
+            main_system.execute_update(conn,query, params)
             print("Thêm sinh viên thành công")
             return True
         except Exception as e:
@@ -70,40 +70,40 @@ class Admin(User):
             return False
     
     def deleteStudent(self,student:Student):
-        conn = main.connect_db()
+        conn = main_system.connect_db()
         if conn is None:
             return False
 
         student_id = student.getStudentID()
 
         # 1. Xóa bảng điểm
-        if not main.execute_update(
+        if not main_system.execute_update(
             conn,
             "DELETE FROM AcademicResult WHERE studentID = %s",
             (student_id,)
         ):
-            main.close_connection(conn)
+            main_system.close_connection(conn)
             return False
 
         # 2. Xóa đăng ký học
-        if not main.execute_update(
+        if not main_system.execute_update(
             conn,
             "DELETE FROM Enrollment WHERE studentID = %s",
             (student_id,)
         ):
-            main.close_connection(conn)
+            main_system.close_connection(conn)
             return False
 
         # 3. Xóa sinh viên
-        if not main.execute_update(
+        if not main_system.execute_update(
             conn,
             "DELETE FROM Student WHERE studentID = %s",
             (student_id,)
         ):
-            main.close_connection(conn)
+            main_system.close_connection(conn)
             return False
 
-        main.close_connection(conn)
+        main_system.close_connection(conn)
         print("Xóa sinh viên thành công")
         return True
 
@@ -161,7 +161,7 @@ class Admin(User):
             student.getStudentID()
         ) 
         try:
-            main.execute_update(conn,query, params)
+            main_system.execute_update(conn,query, params)
             print("Thêm sinh viên thái thành công")
             return True
         except Exception as e:
@@ -173,7 +173,7 @@ class Admin(User):
             INSERT INTO User (userID, userName, password, role)
             VALUES (%s, %s, %s, %s)
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (user.getUserId(), user.getUsername(), user.getPassword(), user.getRole())
         )
@@ -186,14 +186,14 @@ class Admin(User):
                 role = %s
             WHERE userID = %s
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (user.getUsername(), user.getPassword(), user.getRole(), user.getUserId())
         )
 
     def deleteUser(self, user: User):
         query = "DELETE FROM User WHERE userID = %s"
-        return main.execute_update(conn, query, (user.getUserId(),))
+        return main_system.execute_update(conn, query, (user.getUserId(),))
 
 
     # ================= DEPARTMENT =================
@@ -202,7 +202,7 @@ class Admin(User):
             INSERT INTO Department (departmentID, departmentName)
             VALUES (%s, %s)
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (department.getDepartmentID(), department.getDepartmentName())
         )
@@ -213,14 +213,14 @@ class Admin(User):
             SET departmentName = %s
             WHERE departmentID = %s
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (department.getDepartmentName(), department.getDepartmentID())
         )
 
     def deleteDepartment(self, department: Department):
         query = "DELETE FROM Department WHERE departmentID = %s"
-        return main.execute_update(conn, query, (department.getDepartmentID(),))
+        return main_system.execute_update(conn, query, (department.getDepartmentID(),))
 
 
     # ================= COURSE =================
@@ -229,7 +229,7 @@ class Admin(User):
             INSERT INTO Course (courseID, courseCode, courseName, credit, departmentID)
             VALUES (%s, %s, %s, %s, %s)
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (
                 course.get_courseID(),
@@ -249,7 +249,7 @@ class Admin(User):
                 departmentID = %s
             WHERE courseID = %s
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (
                 course.get_courseID(),
@@ -262,7 +262,7 @@ class Admin(User):
 
     def deleteCourse(self, course: Course):
         query = "DELETE FROM Course WHERE courseID = %s"
-        return main.execute_update(conn, query, (course.get_courseID(),))
+        return main_system.execute_update(conn, query, (course.get_courseID(),))
 
 
     # ================= CLASS =================
@@ -271,7 +271,7 @@ class Admin(User):
             INSERT INTO Class (classID, schedule, maxStudent, courseID, instructorID, roomID)
             VALUES (%s, %s, %s, %s, %s, %s)
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (
                 cls.getClassID(),
@@ -293,7 +293,7 @@ class Admin(User):
                 roomID = %s
             WHERE classID = %s
         """
-        return main.execute_update(
+        return main_system.execute_update(
             conn, query,
             (
                 cls.getSchedule(),
@@ -307,7 +307,7 @@ class Admin(User):
 
     def deleteClass(self, cls: Class):
         query = "DELETE FROM Class WHERE classID = %s"
-        return main.execute_update(conn, query, (cls.getClassID(),))
+        return main_system.execute_update(conn, query, (cls.getClassID(),))
 
 
     # ================= REPORT =================
@@ -324,4 +324,4 @@ class Admin(User):
             LEFT JOIN Enrollment e ON cl.classID = e.classID
             GROUP BY d.departmentID
         """
-        return main.execute_query(conn, query)
+        return main_system.execute_query(conn, query)

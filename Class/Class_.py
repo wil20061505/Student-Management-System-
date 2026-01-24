@@ -1,7 +1,7 @@
-from Main_System import main
+from Main_System import main_system
 from datetime import date
-from Student import Student
-conn = main.connect_db()
+from Class.Student import Student
+conn = main_system.connect_db()
 class Class:
     def __init__(self,classId):
         query = """
@@ -16,7 +16,7 @@ class Class:
             WHERE classID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (classId,)

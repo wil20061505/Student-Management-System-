@@ -1,9 +1,9 @@
-from Main_System import main
-from User import User
-from Student import Student
-from  Course import Course
-conn = main.connect_db()
-class teacher(User):
+from Main_System import main_system
+from Class.User import User
+from Class.Student import Student
+from  Class.Course import Course
+conn = main_system.connect_db()
+class Teacher(User):
     def __init__(self,user: User):
                 # gọi constructor cha
         super().__init__(
@@ -24,7 +24,7 @@ class teacher(User):
             WHERE userID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (user.getUserId(),)
@@ -68,11 +68,6 @@ class teacher(User):
         self.__instructorID = instructorID
 # nhập điểm 
     def enterScore(self, student : Student , course : Course, score):
-        query = """
-    INSERT INTO AcademicResult (studentID, courseID, score, grade)
-    VALUES
-    (%s, %s , %s, %s),
-"""
         if score >= 8.5:
             grade = "A"
         elif score >= 7.0:
@@ -81,6 +76,11 @@ class teacher(User):
             grade = "C"
         else:
             grade = "D"
+        
+        query = """
+            INSERT INTO AcademicResult (studentID, courseID, score, grade)
+            VALUES (%s, %s, %s, %s)
+        """
         params = (
             student.getStudentID(),
             course.get_courseID(),
@@ -88,7 +88,7 @@ class teacher(User):
             grade
         )
         try:
-            main.execute_update(conn,query, params)
+            main_system.execute_update(conn, query, params)
             print("Nhập điểm thành công")
             return True
         except Exception as e:
@@ -130,7 +130,7 @@ class teacher(User):
                 student.getStudentID(),
                 course.get_courseID()
             )
-        success = main.execute_update(
+        success = main_system.execute_update(
             conn,
             query,
             params
@@ -160,7 +160,7 @@ class teacher(User):
             WHERE c.instructorID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (self.get_instructorID(),)

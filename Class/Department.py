@@ -1,5 +1,5 @@
-from Main_System import main
-conn = main.connect_db()
+from Main_System import main_system
+conn = main_system.connect_db()
 class Department:
     def __init__(self, departmentID):
         query = """
@@ -10,7 +10,7 @@ class Department:
             WHERE departmentID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (departmentID,)

@@ -1,5 +1,5 @@
-from Main_System import main
-conn = main.connect_db()
+from Main_System import main_system
+conn = main_system.connect_db()
 class Instructor:
     def __init__(self, instructorID):
         query = """
@@ -11,7 +11,7 @@ class Instructor:
             WHERE instructorID = %s
         """
 
-        rows = main.execute_query(
+        rows = main_system.execute_query(
             conn,
             query,
             (instructorID,)
