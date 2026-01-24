@@ -1,5 +1,9 @@
 from User import User
 from Student import Student
+from Department import Department
+from Class_ import Class
+from Course import Course
+
 from Main_System import main
 conn = main.connect_db()
 class Admin(User):
@@ -145,3 +149,179 @@ class Admin(User):
             print("Lựa chọn không hợp lệ")
             return
         print("Cập nhật thông tin thành công")
+
+    def manageStatus(self,student: Student,status):
+        query = """
+    UPDATE Student
+    SET status = %s 
+    WHERE studentID = %s;
+"""
+        params = (
+            status,
+            student.getStudentID()
+        ) 
+        try:
+            main.execute_update(conn,query, params)
+            print("Thêm sinh viên thái thành công")
+            return True
+        except Exception as e:
+            print(f"Lỗi thêm thêm trạng thái: {e}")
+            return False
+        
+    def addUser(self, user: User):
+        query = """
+            INSERT INTO User (userID, userName, password, role)
+            VALUES (%s, %s, %s, %s)
+        """
+        return main.execute_update(
+            conn, query,
+            (user.getUserId(), user.getUsername(), user.getPassword(), user.getRole())
+        )
+
+    def updateUser(self, user: User):
+        query = """
+            UPDATE User
+            SET userName = %s,
+                password = %s,
+                role = %s
+            WHERE userID = %s
+        """
+        return main.execute_update(
+            conn, query,
+            (user.getUsername(), user.getPassword(), user.getRole(), user.getUserId())
+        )
+
+    def deleteUser(self, user: User):
+        query = "DELETE FROM User WHERE userID = %s"
+        return main.execute_update(conn, query, (user.getUserId(),))
+
+
+    # ================= DEPARTMENT =================
+    def addDepartment(self, department: Department):
+        query = """
+            INSERT INTO Department (departmentID, departmentName)
+            VALUES (%s, %s)
+        """
+        return main.execute_update(
+            conn, query,
+            (department.getDepartmentID(), department.getDepartmentName())
+        )
+
+    def updateDepartment(self, department: Department):
+        query = """
+            UPDATE Department
+            SET departmentName = %s
+            WHERE departmentID = %s
+        """
+        return main.execute_update(
+            conn, query,
+            (department.getDepartmentName(), department.getDepartmentID())
+        )
+
+    def deleteDepartment(self, department: Department):
+        query = "DELETE FROM Department WHERE departmentID = %s"
+        return main.execute_update(conn, query, (department.getDepartmentID(),))
+
+
+    # ================= COURSE =================
+    def addCourse(self, course: Course):
+        query = """
+            INSERT INTO Course (courseID, courseCode, courseName, credit, departmentID)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        return main.execute_update(
+            conn, query,
+            (
+                course.get_courseID(),
+                course.get_courseCode(),
+                course.get_courseName(),
+                course.get_credit(),
+                course.get_departmentID()
+            )
+        )
+
+    def updateCourse(self, course: Course):
+        query = """
+            UPDATE Course
+            SET courseCode = %s,
+                courseName = %s,
+                credit = %s,
+                departmentID = %s
+            WHERE courseID = %s
+        """
+        return main.execute_update(
+            conn, query,
+            (
+                course.get_courseID(),
+                course.get_courseCode(),
+                course.get_courseName(),
+                course.get_credit(),
+                course.get_departmentID()
+            )
+        )
+
+    def deleteCourse(self, course: Course):
+        query = "DELETE FROM Course WHERE courseID = %s"
+        return main.execute_update(conn, query, (course.get_courseID(),))
+
+
+    # ================= CLASS =================
+    def addClass(self, cls: Class):
+        query = """
+            INSERT INTO Class (classID, schedule, maxStudent, courseID, instructorID, roomID)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        return main.execute_update(
+            conn, query,
+            (
+                cls.getClassID(),
+                cls.getSchedule(),
+                cls.getMaxStudent(),
+                cls.getCourseID(),
+                cls.getInstructorID(),
+                cls.getRoomID()
+            )
+        )
+
+    def updateClass(self, cls: Class):
+        query = """
+            UPDATE Class
+            SET schedule = %s,
+                maxStudent = %s,
+                courseID = %s,
+                instructorID = %s,
+                roomID = %s
+            WHERE classID = %s
+        """
+        return main.execute_update(
+            conn, query,
+            (
+                cls.getSchedule(),
+                cls.getMaxStudent(),
+                cls.getCourseID(),
+                cls.getInstructorID(),
+                cls.getRoomID(),
+                cls.getClassID()
+            )
+        )
+
+    def deleteClass(self, cls: Class):
+        query = "DELETE FROM Class WHERE classID = %s"
+        return main.execute_update(conn, query, (cls.getClassID(),))
+
+
+    # ================= REPORT =================
+    def generateReport(self):
+        query = """
+            SELECT
+                d.departmentName,
+                COUNT(DISTINCT c.courseID) AS totalCourses,
+                COUNT(DISTINCT cl.classID) AS totalClasses,
+                COUNT(DISTINCT e.studentID) AS totalStudents
+            FROM Department d
+            LEFT JOIN Course c ON d.departmentID = c.departmentID
+            LEFT JOIN Class cl ON c.courseID = cl.courseID
+            LEFT JOIN Enrollment e ON cl.classID = e.classID
+            GROUP BY d.departmentID
+        """
+        return main.execute_query(conn, query)
