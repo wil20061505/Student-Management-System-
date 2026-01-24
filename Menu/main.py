@@ -62,6 +62,8 @@ def admin_menu(admin: Admin):
 3. Manage Course
 4. Manage Class
 5. Generate Report
+6. View Info
+7. Change Password
 0. Logout
 """)
         c = input("Chọn: ").strip()
@@ -76,6 +78,10 @@ def admin_menu(admin: Admin):
             manage_class(admin)
         elif c == "5":
             admin.generateReport()
+        elif c == "6":
+            admin.view_info()
+        elif c == "7":
+            change_password(admin)
         elif c == "0":
             break
         else:
@@ -130,6 +136,28 @@ def manage_class(admin: Admin):
     # TODO: Implement class management
 
 
+def change_password(user: User):
+    """
+    Hàm đổi mật khẩu cho Admin, Teacher hoặc Student
+    """
+    try:
+        username = input("Nhập username: ").strip()
+        old_password = input("Nhập mật khẩu cũ: ").strip()
+        new_password = input("Nhập mật khẩu mới: ").strip()
+        confirm_password = input("Xác nhận mật khẩu mới: ").strip()
+        
+        if new_password != confirm_password:
+            print("Mật khẩu xác nhận không trùng khớp")
+            return
+        
+        if user.change_passWord(username, old_password, new_password):
+            print("Đổi mật khẩu thành công")
+        else:
+            print("Đổi mật khẩu thất bại - Username hoặc mật khẩu cũ không đúng")
+    except Exception as e:
+        print(f"Lỗi: {e}")
+
+
 # ===================== TEACHER MENU =====================
 def teacher_menu(teacher: Teacher):
     while True:
@@ -138,6 +166,8 @@ def teacher_menu(teacher: Teacher):
 1. View My Classes
 2. Enter Score
 3. Update Score
+4. View Info
+5. Change Password
 0. Logout
 """)
         c = input("Chọn: ").strip()
@@ -148,6 +178,10 @@ def teacher_menu(teacher: Teacher):
             pass  # TODO: Implement enter score
         elif c == "3":
             pass  # TODO: Implement update score
+        elif c == "4":
+            teacher.view_info()
+        elif c == "5":
+            change_password(teacher)
         elif c == "0":
             break
         else:

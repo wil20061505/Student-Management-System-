@@ -66,6 +66,21 @@ class Teacher(User):
     
     def set_instructorID(self, instructorID):
         self.__instructorID = instructorID
+
+    def view_info(self):
+        """
+        Hiển thị thông tin của Giáo viên
+        """
+        print("=== THÔNG TIN GIÁO VIÊN ===")
+        print(f"User ID: {self.get_userID()}")
+        print(f"Username: {self.getUsername()}")
+        print(f"Teacher ID: {self.get_teacherID()}")
+        print(f"Full Name: {self.get_fullname()}")
+        print(f"Email: {self.get_email()}")
+        print(f"Instructor ID: {self.get_instructorID()}")
+        print(f"Role: {self.getRole()}")
+        print("=" * 30)
+
 # nhập điểm 
     def enterScore(self, student : Student , course : Course, score):
         if score >= 8.5:
