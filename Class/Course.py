@@ -10,7 +10,7 @@ class Course:
     credit,
     departmentID
             FROM Course
-            WHERE CourseID = %s
+            WHERE courseID = %s
         """
 
         rows = main.execute_query(
@@ -24,7 +24,7 @@ class Course:
 
         row = rows[0]  # row là dict
         self.__courseID = row["courseID"]
-        self.__courseCode  = row["courseCode "]
+        self.__courseCode  = row["courseCode"]
         self.__courseName = row["courseName"]
         self.__credit = row["credit"]
         self.__departmentID = row["departmentID"]

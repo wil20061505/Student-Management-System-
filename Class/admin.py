@@ -17,7 +17,7 @@ class Admin(User):
 
         query = """
             SELECT
-                adminID,
+                adminID
             FROM Admin
             WHERE userID = %s
         """

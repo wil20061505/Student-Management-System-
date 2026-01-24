@@ -12,7 +12,6 @@ class Class:
                 courseID,
                 instructorID,
                 roomID
-        courseID 
             FROM Class
             WHERE classID = %s
         """

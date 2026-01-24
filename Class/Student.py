@@ -18,7 +18,7 @@ class Student(User):
         fullName,
         email,
         userID
-            FROM Teacher
+            FROM Student
             WHERE userID = %s
         """
 
