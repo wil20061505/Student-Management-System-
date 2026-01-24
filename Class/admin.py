@@ -35,6 +35,17 @@ class Admin(User):
 
         self.__StudentID = row["adminID"]
 
+    def view_info(self):
+        """
+        Hiển thị thông tin của Admin
+        """
+        print("=== THÔNG TIN ADMIN ===")
+        print(f"User ID: {self.getUserId()}")
+        print(f"Username: {self.getUsername()}")
+        print(f"Admin ID: {self.__StudentID}")
+        print(f"Role: {self.getRole()}")
+        print("=" * 30)
+
     def addStudent(self, student: Student):
         query = """
             INSERT INTO Student (
