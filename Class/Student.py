@@ -280,7 +280,7 @@ class Student(User):
 
     # hàm join course
 
-    def joinCourse(self, course: Course):
+    def joinCourse(self, courseId):
         """
         Sinh viên đăng ký học 1 course (tự động chọn class đang mở)
         """
@@ -305,7 +305,7 @@ class Student(User):
         rows = main_system.execute_query(
             conn,
             query_find_class,
-            (course.get_courseID(),)
+            (courseId,)
         )
 
         if not rows:
