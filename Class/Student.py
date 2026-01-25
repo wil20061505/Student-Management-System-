@@ -226,20 +226,32 @@ class Student(User):
         print("Cập nhật thông tin thành công")
 
     def ViewGrades(self):
+    # Sử dụng JOIN để kết nối các bảng lại với nhau
         query = """
-            SELECT score, grade
-            FROM AcademicResult
-            WHERE studentID = %s
+            SELECT 
+                cl.roomID as class_name, 
+                c.courseName, 
+                ar.score, 
+                ar.grade
+            FROM AcademicResult ar
+            JOIN Class cl ON ar.classID = cl.classID
+            JOIN Course c ON cl.courseID = c.courseID
+            WHERE ar.studentID = %s
         """
         grades = main_system.execute_query(conn, query, (self.getStudentID(),))
 
         if not grades:
-            print("Không có dữ liệu điểm")
+            print("\n--- Không có dữ liệu điểm ---")
             return
 
+        print(f"\n--- BẢNG ĐIỂM CỦA SINH VIÊN {self.getStudentID()} ---")
         for grade in grades:
-            print(f"Score : {grade['score']}")
-            print(f"Grade : {grade['grade']}")
+            print(f"Môn học: {grade['courseName']}")
+            print(f"Lớp: {grade['class_name']}")
+            print(f"Điểm số: {grade['score']}")
+            print(f"Xếp loại: {grade['grade']}")
+            print("-" * 30)
+
 
     def calculateGPA(self):
         query = """

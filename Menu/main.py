@@ -244,13 +244,13 @@ def teacher_menu(teacher: Teacher):
         if c == "1":
             teacher.viewClasses()
         elif c == "2":
-            studentID = input("Nhập studentID: ")
-            courseId = input("Nhập CourceId:")
-            score = input("Nhập Điểm số: ")
+            studentID = input("Nhập studentID: ").strip()
+            courseId = input("Nhập CourceId:").strip()
+            score = input("Nhập Điểm số: ").strip()
             teacher.enterScore(studentID,courseId,score)
         elif c == "3":
-            studentID = input("Nhập studentID: ")
-            courseId = input("Nhập CourceId:")
+            studentID = input("Nhập studentID: ").strip()
+            courseId = input("Nhập CourceId: ") .strip()
             teacher.updateScore(studentID,courseId)
             teacher.view_info()
         elif c == "5":
