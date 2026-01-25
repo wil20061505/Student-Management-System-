@@ -82,7 +82,7 @@ class Teacher(User):
         print("=" * 30)
 
 # nhập điểm 
-    def enterScore(self, student : Student , course : Course, score):
+    def enterScore(self, studentID , courseId, score):
         if score >= 8.5:
             grade = "A"
         elif score >= 7.0:
@@ -97,8 +97,8 @@ class Teacher(User):
             VALUES (%s, %s, %s, %s)
         """
         params = (
-            student.getStudentID(),
-            course.get_courseID(),
+            studentID,
+            courseId,
             score,
             grade
         )
@@ -110,7 +110,7 @@ class Teacher(User):
             print(f"Nhập điểm không thành công: {e}")
             return False
         
-    def updateScore(self, student: Student, course: Course):
+    def updateScore(self, studentID , courseId):
         try:
             score = float(input("Nhập điểm mới: ").strip())
         except ValueError:
@@ -142,8 +142,8 @@ class Teacher(User):
         params =  (
                 score,
                 grade,
-                student.getStudentID(),
-                course.get_courseID()
+                studentID,
+                courseId
             )
         success = main_system.execute_update(
             conn,

@@ -13,12 +13,12 @@ from Class.Student import Student
 from Class.Course import Course
 from Class.Department import Department
 from Class.Class_ import Class
-
+import pwinput as pw
 
 # ===================== LOGIN =====================
 def login(conn):
     username = input("Username: ").strip()
-    password = input("Password: ").strip()
+    password = pw.pwinput("Password: ").strip()
 
     query = """
         SELECT userID, userName, password, role
@@ -97,8 +97,24 @@ def manage_user(admin: Admin):
 0. Back
 """)
     choice = input("Chọn: ").strip()
-    # TODO: Implement user management
-
+    # Implement user management
+    if choice == "1":
+        userID = input("Nhập id người dùng; ").strip() 
+        userName = input("Nhập Tên người dùng: ").strip(),
+        password = input("Nhập Mật Khẩu: ")
+        role = input("Nhập Role: ")
+        admin.addUser(userID,userName,password,role)
+    elif choice == "2":
+        userID = input("Nhập id người dùng; ").strip() 
+        userName = input("Nhập Tên người dùng mới: ").strip(),
+        password = input("Nhập Mật Khẩu mới: ").strip()
+        role = input("Nhập Role mới: ").strip()
+        admin.updateUser(userName,password,role,userID)
+    elif choice == "3":
+        userID = input("Nhập id người dùng; ").strip()
+        admin.deleteUser(userID)
+    else:
+        print("Lựa chọn không hợp lệ")
 
 def manage_department(admin: Admin):
     print("""
@@ -109,7 +125,23 @@ def manage_department(admin: Admin):
 0. Back
 """)
     choice = input("Chọn: ").strip()
-    # TODO: Implement department management
+    
+    if choice == "1":
+        department_id = input("Nhập Department ID: ").strip()
+        department_name = input("Nhập Department Name: ").strip()
+        admin.addDepartment(department_id, department_name)
+    elif choice == "2":
+        department_id = input("Nhập Department ID: ").strip()
+        department_name = input("Nhập Department Name mới: ").strip()
+        admin.updateDepartment(department_id, department_name)
+    elif choice == "3":
+        department_id = input("Nhập Department ID: ").strip()
+        admin.deleteDepartment(department_id)
+    elif choice == "0":
+        return
+    else:
+        print("Lựa chọn không hợp lệ")
+
 
 
 def manage_course(admin: Admin):
@@ -121,7 +153,32 @@ def manage_course(admin: Admin):
 0. Back
 """)
     choice = input("Chọn: ").strip()
-    # TODO: Implement course management
+    
+    if choice == "1":
+        courseID = input("Nhập Course ID: ").strip()
+        courseCode = input("Nhập Course Code: ").strip()
+        courseName = input("Nhập Course Name: ").strip()
+        credit = input("Nhập Credit: ").strip()
+        departmentID = input("Nhập Department ID: ").strip()
+        admin.addCourse(courseID,
+                courseCode,
+                courseName,
+                credit,
+                departmentID)
+    elif choice == "2":
+        courseID = input("Nhập Course ID: ").strip()
+        courseCode = input("Nhập Course Code: ").strip()
+        courseName = input("Nhập Course Name mới: ").strip()
+        credit = input("Nhập Credit: ").strip()
+        departmentID = input("Nhập Department ID: ").strip()
+        admin.updateCourse(courseID, courseCode, courseName, credit, departmentID)
+    elif choice == "3":
+        course_id = input("Nhập Course ID: ").strip()
+        admin.deleteCourse(course_id)
+    elif choice == "0":
+        return
+    else:
+        print("Lựa chọn không hợp lệ")
 
 
 def manage_class(admin: Admin):
@@ -133,7 +190,35 @@ def manage_class(admin: Admin):
 0. Back
 """)
     choice = input("Chọn: ").strip()
-    # TODO: Implement class management
+    if choice == "1":
+        ClassID = input("Nhập id lớp").strip()
+        Schedule = input("Nhập Schedule").strip()
+        MaxStudent = input("Nhập MaxStudent").strip()
+        CourseID = input("Nhập id khóa học ").strip()
+        InstructorID = input("Nhập id người phụ trách ").strip()
+        RoomID = input("Nhập id phòng học").strip()
+        
+        admin.addClass(ClassID,
+                Schedule,
+                MaxStudent,
+                CourseID,
+                InstructorID,
+                RoomID)
+    elif choice == "2":
+        ClassID = input("Nhập id lớp").strip()
+        Schedule = input("Nhập Schedule").strip()
+        MaxStudent = input("Nhập MaxStudent").strip()
+        CourseID = input("Nhập id khóa học ").strip()
+        InstructorID = input("Nhập id người phụ trách ").strip()
+        RoomID = input("Nhập id phòng học").strip()
+        admin.updateClass(Schedule,MaxStudent,CourseID,InstructorID,RoomID, ClassID)
+    elif choice == "3":
+        course_id = input("Nhập Course ID: ").strip()
+        admin.deleteCourse(course_id)
+    elif choice == "0":
+        return
+    else:
+        print("Lựa chọn không hợp lệ")
 
 
 def change_password(user: User):
@@ -175,10 +260,14 @@ def teacher_menu(teacher: Teacher):
         if c == "1":
             teacher.viewClasses()
         elif c == "2":
-            pass  # TODO: Implement enter score
+            studentID = input("Nhập studentID: ").strip()
+            courseId = input("Nhập CourceId:").strip()
+            score = input("Nhập Điểm số: ").strip()
+            teacher.enterScore(studentID,courseId,score)
         elif c == "3":
-            pass  # TODO: Implement update score
-        elif c == "4":
+            studentID = input("Nhập studentID: ").strip()
+            courseId = input("Nhập CourceId: ") .strip()
+            teacher.updateScore(studentID,courseId)
             teacher.view_info()
         elif c == "5":
             change_password(teacher)
@@ -197,6 +286,8 @@ def student_menu(student: Student):
 2. Join Course
 3. View Grades
 4. Calculate GPA
+5. Edit Profile
+6. Change Password
 0. Logout
 """)
         c = input("Chọn: ").strip()
@@ -204,11 +295,18 @@ def student_menu(student: Student):
         if c == "1":
             student.view_info()
         elif c == "2":
-            pass  # TODO: Implement join course
+            course_id = input("Nhập courseId= ")
+            student.joinCourse(course_id)
         elif c == "3":
             student.ViewGrades()
         elif c == "4":
             student.calculateGPA()
+        elif c == "5":
+            username = input("Username: ").strip()
+            password = pw.pwinput("Password: ").strip()
+            student.edit_info(username,password)
+        elif c == "6":
+            change_password(student)
         elif c == "0":
             break
         else:

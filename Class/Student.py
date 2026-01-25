@@ -176,9 +176,9 @@ class Student(User):
             (new_status, self.getStudentID())
         )
         self.setStatus(new_status)
-    def edit_info(self, user: User):
+    def edit_info(self, userName,passWord):
     # Xác thực lại user
-        if not user.login(user.getUsername(), user.getPassword()):
+        if not self.login(userName, passWord):
             print("Xác thực thất bại")
             return
 
@@ -226,20 +226,32 @@ class Student(User):
         print("Cập nhật thông tin thành công")
 
     def ViewGrades(self):
+    # Sử dụng JOIN để kết nối các bảng lại với nhau
         query = """
-            SELECT score, grade
-            FROM AcademicResult
-            WHERE studentID = %s
+            SELECT 
+                cl.roomID as class_name, 
+                c.courseName, 
+                ar.score, 
+                ar.grade
+            FROM AcademicResult ar
+            JOIN Class cl ON ar.classID = cl.classID
+            JOIN Course c ON cl.courseID = c.courseID
+            WHERE ar.studentID = %s
         """
         grades = main_system.execute_query(conn, query, (self.getStudentID(),))
 
         if not grades:
-            print("Không có dữ liệu điểm")
+            print("\n--- Không có dữ liệu điểm ---")
             return
 
+        print(f"\n--- BẢNG ĐIỂM CỦA SINH VIÊN {self.getStudentID()} ---")
         for grade in grades:
-            print(f"Score : {grade['score']}")
-            print(f"Grade : {grade['grade']}")
+            print(f"Môn học: {grade['courseName']}")
+            print(f"Lớp: {grade['class_name']}")
+            print(f"Điểm số: {grade['score']}")
+            print(f"Xếp loại: {grade['grade']}")
+            print("-" * 30)
+
 
     def calculateGPA(self):
         query = """
@@ -280,7 +292,7 @@ class Student(User):
 
     # hàm join course
 
-    def joinCourse(self, course: Course):
+    def joinCourse(self, courseId):
         """
         Sinh viên đăng ký học 1 course (tự động chọn class đang mở)
         """
@@ -305,7 +317,7 @@ class Student(User):
         rows = main_system.execute_query(
             conn,
             query_find_class,
-            (course.get_courseID(),)
+            (courseId,)
         )
 
         if not rows:
