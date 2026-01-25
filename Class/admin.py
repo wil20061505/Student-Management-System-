@@ -347,7 +347,7 @@ class Admin(User):
             raise ValueError("Không tìm thấy Admin")
 
         row = rows[0]  # row là dict
-        print(f"departmentName: {row["departmentName"]}")
-        print(f"totalCourses: {row["totalCourses"]}")
-        print(f"totalClasses: {row["totalClasses"]}")
-        print(f"totalStudents: {row["totalStudents"]}")
+        print(f"departmentName: {row['d.departmentName']}")
+        print(f"totalCourses: {row['totalCourses']}")
+        print(f"totalClasses: {row['totalClasses']}")
+        print(f"totalStudents: {row['totalStudents']}")
