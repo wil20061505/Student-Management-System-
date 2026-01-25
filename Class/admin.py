@@ -342,4 +342,12 @@ class Admin(User):
             LEFT JOIN Enrollment e ON cl.classID = e.classID
             GROUP BY d.departmentID
         """
-        return main_system.execute_query(conn, query)
+        rows = main_system.execute_query(conn, query)
+        if not rows:
+            raise ValueError("Không tìm thấy Admin")
+
+        row = rows[0]  # row là dict
+        print(f"departmentName: {row['d.departmentName']}")
+        print(f"totalCourses: {row['totalCourses']}")
+        print(f"totalClasses: {row['totalClasses']}")
+        print(f"totalStudents: {row['totalStudents']}")

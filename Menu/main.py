@@ -268,6 +268,7 @@ def teacher_menu(teacher: Teacher):
             studentID = input("Nhập studentID: ").strip()
             courseId = input("Nhập CourceId: ") .strip()
             teacher.updateScore(studentID,courseId)
+        elif c == "4":
             teacher.view_info()
         elif c == "5":
             change_password(teacher)
