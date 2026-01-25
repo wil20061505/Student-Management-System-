@@ -13,12 +13,12 @@ from Class.Student import Student
 from Class.Course import Course
 from Class.Department import Department
 from Class.Class_ import Class
-
+import pwinput as pw
 
 # ===================== LOGIN =====================
 def login(conn):
     username = input("Username: ").strip()
-    password = input("Password: ").strip()
+    password = pw.pwinput("Password: ").strip()
 
     query = """
         SELECT userID, userName, password, role
