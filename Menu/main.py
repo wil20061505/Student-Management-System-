@@ -98,7 +98,23 @@ def manage_user(admin: Admin):
 """)
     choice = input("Chọn: ").strip()
     # Implement user management
-
+    if choice == "1":
+        userID = input("Nhập id người dùng; ").strip() 
+        userName = input("Nhập Tên người dùng: ").strip(),
+        password = input("Nhập Mật Khẩu: ")
+        role = input("Nhập Role: ")
+        admin.addUser(userID,userName,password,role)
+    elif choice == "2":
+        userID = input("Nhập id người dùng; ").strip() 
+        userName = input("Nhập Tên người dùng mới: ").strip(),
+        password = input("Nhập Mật Khẩu mới: ").strip()
+        role = input("Nhập Role mới: ").strip()
+        admin.updateUser(userName,password,role,userID)
+    elif choice == "3":
+        userID = input("Nhập id người dùng; ").strip()
+        admin.deleteUser(userID)
+    else:
+        print("Lựa chọn không hợp lệ")
 
 def manage_department(admin: Admin):
     print("""
@@ -270,6 +286,8 @@ def student_menu(student: Student):
 2. Join Course
 3. View Grades
 4. Calculate GPA
+5. Edit Profile
+6. Change Password
 0. Logout
 """)
         c = input("Chọn: ").strip()
@@ -283,6 +301,12 @@ def student_menu(student: Student):
             student.ViewGrades()
         elif c == "4":
             student.calculateGPA()
+        elif c == "5":
+            username = input("Username: ").strip()
+            password = pw.pwinput("Password: ").strip()
+            student.edit_info(username,password)
+        elif c == "6":
+            change_password(student)
         elif c == "0":
             break
         else:

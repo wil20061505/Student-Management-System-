@@ -176,9 +176,9 @@ class Student(User):
             (new_status, self.getStudentID())
         )
         self.setStatus(new_status)
-    def edit_info(self, user: User):
+    def edit_info(self, userName,passWord):
     # Xác thực lại user
-        if not user.login(user.getUsername(), user.getPassword()):
+        if not self.login(userName, passWord):
             print("Xác thực thất bại")
             return
 
