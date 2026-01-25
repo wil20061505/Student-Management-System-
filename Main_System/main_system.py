@@ -4,7 +4,8 @@ from typing import List, Dict, Any
 def connect_db():
     try:
         conn = mysql.connector.connect(
-            host="localhost",
+            
+            host="host.docker.internal",
             user="root",
             password="dat0377324546",
             database="DB_Student_Management_System"
