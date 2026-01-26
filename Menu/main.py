@@ -17,6 +17,7 @@ import pwinput as pw
 
 # ===================== LOGIN =====================
 def login(conn):
+    print("==== login ====")
     username = input("Username: ").strip()
     password = pw.pwinput("Password: ").strip()
 
@@ -213,7 +214,7 @@ def manage_class(admin: Admin):
         RoomID = input("Nhập id phòng học").strip()
         admin.updateClass(Schedule,MaxStudent,CourseID,InstructorID,RoomID, ClassID)
     elif choice == "3":
-        course_id = input("Nhập Course ID: ").strip()
+        course_id = input("Nhập Class ID: ").strip()
         admin.deleteCourse(course_id)
     elif choice == "0":
         return
@@ -322,24 +323,30 @@ def main():
         return
 
     try:
-        user = login(conn)
+        while True:
+            try:
+                user = login(conn)
+                break
+            except ValueError as e:
+                print("\nĐăng nhập thất bại:", e)
+                choice = input("Bạn có muốn thử lại không? (y/n): ").strip().lower()
+                if choice != "y":
+                    print("Kết thúc chương trình.")
+                    return
+
         role = user.getRole().upper()
 
         if role == "ADMIN":
-            admin_menu(user)  # type: ignore
+            admin_menu(user) # type: ignore
         elif role == "TEACHER":
-            teacher_menu(user)  # type: ignore
+            teacher_menu(user) # type: ignore
         elif role == "STUDENT":
-            student_menu(user)  # type: ignore
+            student_menu(user) # type: ignore
         else:
             print("Role không hợp lệ")
 
-    except Exception as e:
-        print("Lỗi:", e)
-
     finally:
         close_connection(conn)
-
 
 if __name__ == "__main__":
     main()
