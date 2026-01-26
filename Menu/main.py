@@ -1,23 +1,20 @@
 import sys
 import os
+import pwinput as pw
 
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
 
-from Main_System.main_system import execute_query,connect_db,close_connection
+from Main_System.main_system import execute_query, connect_db, close_connection
 from Class.User import User
 from Class.admin import Admin
 from Class.Teacher import Teacher
 from Class.Student import Student
-from Class.Course import Course
-from Class.Department import Department
-from Class.Class_ import Class
-import pwinput as pw
 
 # ===================== LOGIN =====================
 def login(conn):
-    print("==== login ====")
+    print("===== LOGIN =====")
     username = input("Username: ").strip()
     password = pw.pwinput("Password: ").strip()
 
@@ -26,21 +23,13 @@ def login(conn):
         FROM User
         WHERE userName = %s AND password = %s
     """
-
     rows = execute_query(conn, query, (username, password))
 
     if not rows:
-        raise ValueError("Sai tài khoản hoặc mật khẩu")
+        raise ValueError("Invalid username or password")
 
     row = rows[0]
-
-    base_user = User(
-        row["userID"],
-        row["userName"],
-        row["password"],
-        row["role"]
-    )
-
+    base_user = User(row["userID"], row["userName"], row["password"], row["role"])
     role = row["role"].upper()
 
     if role == "ADMIN":
@@ -49,8 +38,7 @@ def login(conn):
         return Teacher(base_user)
     elif role == "STUDENT":
         return Student(base_user)
-    else:
-        return base_user
+    return base_user
 
 
 # ===================== ADMIN MENU =====================
@@ -58,191 +46,174 @@ def admin_menu(admin: Admin):
     while True:
         print("""
 ===== ADMIN MENU =====
-1. Manage User
-2. Manage Department
-3. Manage Course
-4. Manage Class
+1. Manage Users
+2. Manage Departments
+3. Manage Courses
+4. Manage Classes
 5. Generate Report
 6. View Info
 7. Change Password
-0. Logout
+8. Logout
+0. Exit
 """)
-        c = input("Chọn: ").strip()
+        choice = input("Select: ").strip()
 
-        if c == "1":
+        if choice == "1":
             manage_user(admin)
-        elif c == "2":
+        elif choice == "2":
             manage_department(admin)
-        elif c == "3":
+        elif choice == "3":
             manage_course(admin)
-        elif c == "4":
+        elif choice == "4":
             manage_class(admin)
-        elif c == "5":
+        elif choice == "5":
             admin.generateReport()
-        elif c == "6":
+        elif choice == "6":
             admin.view_info()
-        elif c == "7":
+        elif choice == "7":
             change_password(admin)
-        elif c == "0":
-            break
+        elif choice == "8":
+            return "LOGOUT"
+        elif choice == "0":
+            sys.exit(0)
         else:
-            print("Lựa chọn không hợp lệ")
+            print("Invalid choice")
 
 
 def manage_user(admin: Admin):
     print("""
---- MANAGE USER ---
+--- USER MANAGEMENT ---
 1. Add User
 2. Update User
 3. Delete User
 0. Back
 """)
-    choice = input("Chọn: ").strip()
-    # Implement user management
+    choice = input("Select: ").strip()
+
     if choice == "1":
-        userID = input("Nhập id người dùng; ").strip() 
-        userName = input("Nhập Tên người dùng: ").strip(),
-        password = input("Nhập Mật Khẩu: ")
-        role = input("Nhập Role: ")
-        admin.addUser(userID,userName,password,role)
+        userID = input("User ID: ").strip()
+        userName = input("Username: ").strip()
+        password = input("Password: ").strip()
+        role = input("Role (ADMIN/TEACHER/STUDENT): ").strip().upper()
+        admin.addUser(userID, userName, password, role)
+
     elif choice == "2":
-        userID = input("Nhập id người dùng; ").strip() 
-        userName = input("Nhập Tên người dùng mới: ").strip(),
-        password = input("Nhập Mật Khẩu mới: ").strip()
-        role = input("Nhập Role mới: ").strip()
-        admin.updateUser(userName,password,role,userID)
+        userID = input("User ID: ").strip()
+        userName = input("New Username: ").strip()
+        password = input("New Password: ").strip()
+        role = input("New Role: ").strip().upper()
+        admin.updateUser(userName, password, role, userID)
+
     elif choice == "3":
-        userID = input("Nhập id người dùng; ").strip()
+        userID = input("User ID: ").strip()
         admin.deleteUser(userID)
-    else:
-        print("Lựa chọn không hợp lệ")
+
 
 def manage_department(admin: Admin):
     print("""
---- MANAGE DEPARTMENT ---
+--- DEPARTMENT MANAGEMENT ---
 1. Add Department
 2. Update Department
 3. Delete Department
 0. Back
 """)
-    choice = input("Chọn: ").strip()
-    
-    if choice == "1":
-        department_id = input("Nhập Department ID: ").strip()
-        department_name = input("Nhập Department Name: ").strip()
-        admin.addDepartment(department_id, department_name)
-    elif choice == "2":
-        department_id = input("Nhập Department ID: ").strip()
-        department_name = input("Nhập Department Name mới: ").strip()
-        admin.updateDepartment(department_id, department_name)
-    elif choice == "3":
-        department_id = input("Nhập Department ID: ").strip()
-        admin.deleteDepartment(department_id)
-    elif choice == "0":
-        return
-    else:
-        print("Lựa chọn không hợp lệ")
+    choice = input("Select: ").strip()
 
+    if choice == "1":
+        dept_id = input("Department ID: ").strip()
+        dept_name = input("Department Name: ").strip()
+        admin.addDepartment(dept_id, dept_name)
+
+    elif choice == "2":
+        dept_id = input("Department ID: ").strip()
+        dept_name = input("New Department Name: ").strip()
+        admin.updateDepartment(dept_id, dept_name)
+
+    elif choice == "3":
+        dept_id = input("Department ID: ").strip()
+        admin.deleteDepartment(dept_id)
 
 
 def manage_course(admin: Admin):
     print("""
---- MANAGE COURSE ---
+--- COURSE MANAGEMENT ---
 1. Add Course
 2. Update Course
 3. Delete Course
 0. Back
 """)
-    choice = input("Chọn: ").strip()
-    
+    choice = input("Select: ").strip()
+
     if choice == "1":
-        courseID = input("Nhập Course ID: ").strip()
-        courseCode = input("Nhập Course Code: ").strip()
-        courseName = input("Nhập Course Name: ").strip()
-        credit = input("Nhập Credit: ").strip()
-        departmentID = input("Nhập Department ID: ").strip()
-        admin.addCourse(courseID,
-                courseCode,
-                courseName,
-                credit,
-                departmentID)
+        admin.addCourse(
+            input("Course ID: ").strip(),
+            input("Course Code: ").strip(),
+            input("Course Name: ").strip(),
+            int(input("Credit: ").strip()),
+            input("Department ID: ").strip()
+        )
+
     elif choice == "2":
-        courseID = input("Nhập Course ID: ").strip()
-        courseCode = input("Nhập Course Code: ").strip()
-        courseName = input("Nhập Course Name mới: ").strip()
-        credit = input("Nhập Credit: ").strip()
-        departmentID = input("Nhập Department ID: ").strip()
-        admin.updateCourse(courseID, courseCode, courseName, credit, departmentID)
+        admin.updateCourse(
+            input("Course ID: ").strip(),
+            input("Course Code: ").strip(),
+            input("New Course Name: ").strip(),
+            int(input("Credit: ").strip()),
+            input("Department ID: ").strip()
+        )
+
     elif choice == "3":
-        course_id = input("Nhập Course ID: ").strip()
-        admin.deleteCourse(course_id)
-    elif choice == "0":
-        return
-    else:
-        print("Lựa chọn không hợp lệ")
+        admin.deleteCourse(input("Course ID: ").strip())
 
 
 def manage_class(admin: Admin):
     print("""
---- MANAGE CLASS ---
+--- CLASS MANAGEMENT ---
 1. Add Class
 2. Update Class
 3. Delete Class
 0. Back
 """)
-    choice = input("Chọn: ").strip()
+    choice = input("Select: ").strip()
+
     if choice == "1":
-        ClassID = input("Nhập id lớp").strip()
-        Schedule = input("Nhập Schedule").strip()
-        MaxStudent = input("Nhập MaxStudent").strip()
-        CourseID = input("Nhập id khóa học ").strip()
-        InstructorID = input("Nhập id người phụ trách ").strip()
-        RoomID = input("Nhập id phòng học").strip()
-        
-        admin.addClass(ClassID,
-                Schedule,
-                MaxStudent,
-                CourseID,
-                InstructorID,
-                RoomID)
+        admin.addClass(
+            input("Class ID: ").strip(),
+            input("Schedule: ").strip(),
+            int(input("Max Students: ").strip()),
+            input("Course ID: ").strip(),
+            input("Instructor ID: ").strip(),
+            input("Room ID: ").strip()
+        )
+
     elif choice == "2":
-        ClassID = input("Nhập id lớp").strip()
-        Schedule = input("Nhập Schedule").strip()
-        MaxStudent = input("Nhập MaxStudent").strip()
-        CourseID = input("Nhập id khóa học ").strip()
-        InstructorID = input("Nhập id người phụ trách ").strip()
-        RoomID = input("Nhập id phòng học").strip()
-        admin.updateClass(Schedule,MaxStudent,CourseID,InstructorID,RoomID, ClassID)
+        admin.updateClass(
+            input("Schedule: ").strip(),
+            int(input("Max Students: ").strip()),
+            input("Course ID: ").strip(),
+            input("Instructor ID: ").strip(),
+            input("Room ID: ").strip(),
+            input("Class ID: ").strip()
+        )
+
     elif choice == "3":
-        course_id = input("Nhập Class ID: ").strip()
-        admin.deleteCourse(course_id)
-    elif choice == "0":
-        return
-    else:
-        print("Lựa chọn không hợp lệ")
+        admin.deleteClass(input("Class ID: ").strip())
 
 
+# ===================== PASSWORD =====================
 def change_password(user: User):
-    """
-    Hàm đổi mật khẩu cho Admin, Teacher hoặc Student
-    """
-    try:
-        username = input("Nhập username: ").strip()
-        old_password = input("Nhập mật khẩu cũ: ").strip()
-        new_password = input("Nhập mật khẩu mới: ").strip()
-        confirm_password = input("Xác nhận mật khẩu mới: ").strip()
-        
-        if new_password != confirm_password:
-            print("Mật khẩu xác nhận không trùng khớp")
-            return
-        
-        if user.change_passWord(username, old_password, new_password):
-            print("Đổi mật khẩu thành công")
-        else:
-            print("Đổi mật khẩu thất bại - Username hoặc mật khẩu cũ không đúng")
-    except Exception as e:
-        print(f"Lỗi: {e}")
+    old_pass = pw.pwinput("Old password: ").strip()
+    new_pass = pw.pwinput("New password: ").strip()
+    confirm = pw.pwinput("Confirm new password: ").strip()
 
+    if new_pass != confirm:
+        print("Password confirmation does not match")
+        return
+
+    if user.change_passWord(user.getUsername(), old_pass, new_pass):
+        print("Password changed successfully")
+    else:
+        print("Failed to change password")
 
 # ===================== TEACHER MENU =====================
 def teacher_menu(teacher: Teacher):
@@ -250,103 +221,117 @@ def teacher_menu(teacher: Teacher):
         print("""
 ===== TEACHER MENU =====
 1. View My Classes
-2. Enter Score
-3. Update Score
-4. View Info
+2. Enter Student Score
+3. Update Student Score
+4. View Personal Info
 5. Change Password
-0. Logout
+8. Logout
+0. Exit
 """)
-        c = input("Chọn: ").strip()
+        choice = input("Select: ").strip()
 
-        if c == "1":
+        if choice == "1":
             teacher.viewClasses()
-        elif c == "2":
-            studentID = input("Nhập studentID: ").strip()
-            courseId = input("Nhập CourceId:").strip()
-            score = input("Nhập Điểm số: ").strip()
-            teacher.enterScore(studentID,courseId,score)
-        elif c == "3":
-            studentID = input("Nhập studentID: ").strip()
-            courseId = input("Nhập CourceId: ") .strip()
-            teacher.updateScore(studentID,courseId)
-        elif c == "4":
+
+        elif choice == "2":
+            studentID = input("Student ID: ").strip()
+            courseID = input("Course ID: ").strip()
+            score = input("Score: ").strip()
+            teacher.enterScore(studentID, courseID, score)
+
+        elif choice == "3":
+            studentID = input("Student ID: ").strip()
+            courseID = input("Course ID: ").strip()
+            teacher.updateScore(studentID, courseID)
+
+        elif choice == "4":
             teacher.view_info()
-        elif c == "5":
+
+        elif choice == "5":
             change_password(teacher)
-        elif c == "0":
-            break
+
+        elif choice == "8":
+            return "LOGOUT"
+
+        elif choice == "0":
+            sys.exit(0)
+
         else:
-            print("Lựa chọn không hợp lệ")
-
-
+            print("Invalid choice")
 # ===================== STUDENT MENU =====================
 def student_menu(student: Student):
     while True:
         print("""
 ===== STUDENT MENU =====
-1. View Info
+1. View Personal Info
 2. Join Course
 3. View Grades
 4. Calculate GPA
 5. Edit Profile
 6. Change Password
-0. Logout
+8. Logout
+0. Exit
 """)
-        c = input("Chọn: ").strip()
+        choice = input("Select: ").strip()
 
-        if c == "1":
+        if choice == "1":
             student.view_info()
-        elif c == "2":
-            course_id = input("Nhập courseId= ")
-            student.joinCourse(course_id)
-        elif c == "3":
-            student.ViewGrades()
-        elif c == "4":
-            student.calculateGPA()
-        elif c == "5":
-            username = input("Username: ").strip()
-            password = pw.pwinput("Password: ").strip()
-            student.edit_info(username,password)
-        elif c == "6":
-            change_password(student)
-        elif c == "0":
-            break
-        else:
-            print("Lựa chọn không hợp lệ")
 
+        elif choice == "2":
+            courseID = input("Course ID: ").strip()
+            student.joinCourse(courseID)
+
+        elif choice == "3":
+            student.ViewGrades()
+
+        elif choice == "4":
+            student.calculateGPA()
+
+        elif choice == "5":
+            Username = input("Confirm password:").strip()
+            password = pw.pwinput("Confirm password: ").strip()
+            student.edit_info(Username, password)
+
+        elif choice == "6":
+            change_password(student)
+
+        elif choice == "8":
+            return "LOGOUT"
+
+        elif choice == "0":
+            sys.exit(0)
+
+        else:
+            print("Invalid choice")
 
 # ===================== MAIN =====================
 def main():
     conn = connect_db()
-    if conn is None:
-        print("Không kết nối được CSDL")
+    if not conn:
+        print("Database connection failed")
         return
 
     try:
         while True:
             try:
                 user = login(conn)
-                break
             except ValueError as e:
-                print("\nĐăng nhập thất bại:", e)
-                choice = input("Bạn có muốn thử lại không? (y/n): ").strip().lower()
-                if choice != "y":
-                    print("Kết thúc chương trình.")
-                    return
+                print(e)
+                continue
 
-        role = user.getRole().upper()
+            role = user.getRole().upper()
+            if role == "ADMIN":
+                result = admin_menu(user) # type: ignore
+            elif role == "TEACHER":
+                result = teacher_menu(user) # type: ignore
+            elif role == "STUDENT":
+                result = student_menu(user) # type: ignore
 
-        if role == "ADMIN":
-            admin_menu(user) # type: ignore
-        elif role == "TEACHER":
-            teacher_menu(user) # type: ignore
-        elif role == "STUDENT":
-            student_menu(user) # type: ignore
-        else:
-            print("Role không hợp lệ")
-
+            if result != "LOGOUT":
+                break
     finally:
         close_connection(conn)
+
 
 if __name__ == "__main__":
     main()

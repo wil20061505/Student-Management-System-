@@ -5,7 +5,7 @@ def connect_db():
     try:
         conn = mysql.connector.connect(
             
-            host="host.docker.internal",
+            host="localhost",
             user="root",
             password="dat0377324546",
             database="DB_Student_Management_System"
