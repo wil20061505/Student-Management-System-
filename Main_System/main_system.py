@@ -12,7 +12,6 @@ def connect_db():
         )
 
         if conn.is_connected():
-            print("Kết nối MySQL thành công")
             return conn
 
     except mysql.connector.Error as err:
