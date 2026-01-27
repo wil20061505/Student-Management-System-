@@ -3,7 +3,8 @@ from Class.Student import Student
 from Class.Department import Department
 from Class.Class_ import Class
 from Class.Course import Course
-
+import os
+from datetime import datetime
 from Main_System import main_system
 conn = main_system.connect_db()
 class Admin(User):
@@ -361,3 +362,65 @@ class Admin(User):
     Total Teachers   : {row['totalTeachers']}
     ---------------------------------------
     """)
+    def backupDatabase(self):
+        """
+        Backup toàn bộ database ra file .sql
+        """
+        try:
+            # thông tin DB (đồng bộ với main_system)
+            DB_NAME = "DB_Student_Management_System"
+            DB_USER = "root"
+            DB_PASSWORD = "dat0377324546"
+            DB_HOST = "host.docker.internal"
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_dir = "backup"
+            os.makedirs(backup_dir, exist_ok=True)
+
+            backup_file = f"{backup_dir}/backup_{timestamp}.sql"
+
+            command = (
+                f"mysqldump -h {DB_HOST} -u {DB_USER} "
+                f"-p{DB_PASSWORD} {DB_NAME} > {backup_file}"
+            )
+
+            os.system(command)
+
+            print(f"Backup thành công: {backup_file}")
+            return True
+
+        except Exception as e:
+            print(f"Lỗi backup: {e}")
+            return False
+    def restoreDatabase(self):
+        """
+        Restore database từ file backup mới nhất
+        """
+        try:
+            DB_NAME = "DB_Student_Management_System"
+            DB_USER = "root"
+            DB_PASSWORD = "dat0377324546"
+            DB_HOST = "host.docker.internal"
+
+            backup_dir = "backup"
+            files = sorted(os.listdir(backup_dir), reverse=True)
+
+            if not files:
+                print("Không tìm thấy file backup")
+                return False
+
+            latest_backup = os.path.join(backup_dir, files[0])
+
+            command = (
+                f"mysql -h {DB_HOST} -u {DB_USER} "
+                f"-p{DB_PASSWORD} {DB_NAME} < {latest_backup}"
+            )
+
+            os.system(command)
+
+            print(f"Restore thành công từ: {latest_backup}")
+            return True
+
+        except Exception as e:
+            print(f"Lỗi restore: {e}")
+            return False
