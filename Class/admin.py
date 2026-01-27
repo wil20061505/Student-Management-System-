@@ -33,7 +33,7 @@ class Admin(User):
 
         row = rows[0]  # row là dict
 
-        self.__StudentID = row["adminID"]
+        self.__adminID = row["adminID"]
 
     def view_info(self):
         """
@@ -42,7 +42,7 @@ class Admin(User):
         print("=== THÔNG TIN ADMIN ===")
         print(f"User ID: {self.getUserId()}")
         print(f"Username: {self.getUsername()}")
-        print(f"Admin ID: {self.__StudentID}")
+        print(f"Admin ID: {self.__adminID}")
         print(f"Role: {self.getRole()}")
         print("=" * 30)
 
