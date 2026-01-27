@@ -335,19 +335,29 @@ class Admin(User):
                 d.departmentName,
                 COUNT(DISTINCT c.courseID) AS totalCourses,
                 COUNT(DISTINCT cl.classID) AS totalClasses,
-                COUNT(DISTINCT e.studentID) AS totalStudents
+                COUNT(DISTINCT e.studentID) AS totalStudents,
+                COUNT(DISTINCT cl.instructorID) AS totalTeachers
             FROM Department d
             LEFT JOIN Course c ON d.departmentID = c.departmentID
             LEFT JOIN Class cl ON c.courseID = cl.courseID
             LEFT JOIN Enrollment e ON cl.classID = e.classID
-            GROUP BY d.departmentID
+            GROUP BY d.departmentID, d.departmentName
+            ORDER BY d.departmentName
         """
-        rows = main_system.execute_query(conn, query)
-        if not rows:
-            raise ValueError("Không tìm thấy Admin")
 
-        row = rows[0]  # row là dict
-        print(f"departmentName: {row['d.departmentName']}")
-        print(f"totalCourses: {row['totalCourses']}")
-        print(f"totalClasses: {row['totalClasses']}")
-        print(f"totalStudents: {row['totalStudents']}")
+        rows = main_system.execute_query(conn, query)
+
+        if not rows:
+            print("Không có dữ liệu báo cáo")
+            return
+
+        print("\n===== SYSTEM REPORT BY DEPARTMENT =====")
+        for row in rows:
+            print(f"""
+    Department       : {row['departmentName']}
+    Total Courses    : {row['totalCourses']}
+    Total Classes    : {row['totalClasses']}
+    Total Students   : {row['totalStudents']}
+    Total Teachers   : {row['totalTeachers']}
+    ---------------------------------------
+    """)
