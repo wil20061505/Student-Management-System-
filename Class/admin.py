@@ -371,7 +371,7 @@ class Admin(User):
             DB_NAME = "DB_Student_Management_System"
             DB_USER = "root"
             DB_PASSWORD = "dat0377324546"
-            DB_HOST = "host.docker.internal"
+            DB_HOST = "localhost"
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_dir = "backup"
@@ -400,7 +400,7 @@ class Admin(User):
             DB_NAME = "DB_Student_Management_System"
             DB_USER = "root"
             DB_PASSWORD = "dat0377324546"
-            DB_HOST = "host.docker.internal"
+            DB_HOST = "localhost"
 
             backup_dir = "backup"
             files = sorted(os.listdir(backup_dir), reverse=True)
