@@ -54,6 +54,8 @@ def admin_menu(admin: Admin):
 6. View Info
 7. Change Password
 8. Logout
+9. Backup Database
+10. Restore Database
 0. Exit
 """)
         choice = input("Select: ").strip()
@@ -74,6 +76,11 @@ def admin_menu(admin: Admin):
             change_password(admin)
         elif choice == "8":
             return "LOGOUT"
+
+        elif choice == "9":
+            admin.backupDatabase()
+        elif choice == "10":
+            admin.restoreDatabase()
         elif choice == "0":
             sys.exit(0)
         else:
